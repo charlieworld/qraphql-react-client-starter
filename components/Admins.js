@@ -1,39 +1,34 @@
-// src/Users.js
 import React from "react";
-import { Query } from "react-apollo";
-import { gql } from "apollo-boost";
+import PropTypes from 'prop-types';
 import styled from 'styled-components';
+import withAdminsQuery from '../model/query/withAdminsQuery'
 
 const ListItem = styled.li`
   list-style-type: none;
   border: black solid 1px;
 `;
 
-const getAdminsQuery = gql`
-  {
-    admins {
-      id
-      name
-    }
-  }
-`;
+const Admins = ({data}) => {
+  const { loading, error, admins } = data;
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error :(</p>;
+  const lists = admins.map(admin => (
+    <ListItem key={admin.id}>{admin.id} : {admin.name} </ListItem>
+  ));
 
-const Admins = () => (
-  <Query query={getAdminsQuery}>
-    {({ loading, error, data }) => {
-      if (loading) return <p>Loading...</p>;
-      if (error) return <p>Error :(</p>;
-      // 最重要的就是從 data 裡面取得資料
-      const lists = data.admins.map(currentAdin => (
-        <ListItem key={currentAdin.id}>{currentAdin.id} : {currentAdin.name} </ListItem>
-      ));
+  return (
+    <>
+      <ul>{lists}</ul>
+    </>
+  );
+};
 
-      return (
-        <>
-          <ul>{lists}</ul>
-        </>
-      );
-    }}
-  </Query>
-);
-export default Admins;
+Admins.propTypes = {
+  data: PropTypes.shape({
+    loading: PropTypes.shape({}),
+    error: PropTypes.shape({}),
+    admins: PropTypes.arrayOf(PropTypes.shape({}))
+  }),
+};
+
+export default withAdminsQuery(Admins);

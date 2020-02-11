@@ -6,7 +6,7 @@ import Admins from "../components/Admins";
 import Nav from "../components/Nav";
 
 const client = new ApolloClient({
-  uri: "http://localhost:8000/api",
+  uri: "http://localhost:8101/api",
   fetch
 });
 
