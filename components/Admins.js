@@ -8,7 +8,8 @@ const ListItem = styled.li`
   border: black solid 1px;
 `;
 
-const Admins = ({data}) => {
+const Admins = (input) => {
+  const { data } = input;
   const { loading, error, admins } = data;
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error :(</p>;
