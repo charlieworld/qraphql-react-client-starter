@@ -1,8 +1,7 @@
 import React, { useState } from "react";
-import { Mutation } from "@apollo/react-components";
 import { useApolloClient, useMutation } from "@apollo/react-hooks";
 //import { useRouter } from 'next/router'
-//import token from '../tools/token'
+import token from '../tools/token'
 import styled from "styled-components";
 import color from "../assist/color";
 import withLogin from "../model/mutaion/withLogin";
@@ -60,22 +59,17 @@ const Index = () => {
   };
 
   const onSubmit = login => {
-    //e.preventDefault();
-    console.log("The link was clicked.");
-    console.log(`login: ${login}`);
     let variables = LoginVariables;
     variables.addAdminInput.name = name;
     variables.addAdminInput.key = password;
     login({ variables });
-    console.log(`name: ${name} | password: ${password}`);
   };
 
   const client = useApolloClient();
 
   const [login, { loading, error }] = useMutation(LoginMutation, {
-    onCompleted({ login }) {
-      console.log('login :', login)
-      //localStorage.setItem("token", login);
+    onCompleted({login}) {
+      token.set(login.token);
       client.writeData({ data: { isLoggedIn: true } });
     }
   });
