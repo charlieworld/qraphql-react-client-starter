@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import withAdminsQuery from '../model/query/withAdminsQuery'
+import withQueryAdmins from '../model/query/withQueryAdmins'
 
 const ListItem = styled.li`
   list-style-type: none;
@@ -32,4 +32,4 @@ Admins.propTypes = {
   }),
 };
 
-export default withAdminsQuery(Admins);
+export default withQueryAdmins(Admins);

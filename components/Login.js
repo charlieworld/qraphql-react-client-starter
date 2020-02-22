@@ -1,9 +1,14 @@
-import React, { useState } from 'react'
+import React, { useState } from "react";
+import { Mutation } from "@apollo/react-components";
+import { useApolloClient, useMutation } from "@apollo/react-hooks";
 //import { useRouter } from 'next/router'
 //import token from '../tools/token'
-import styled from 'styled-components';
-import color from '../assist/color';
+import styled from "styled-components";
+import color from "../assist/color";
+import withLogin from "../model/mutaion/withLogin";
 
+
+const { LoginMutation, LoginVariables } = withLogin;
 
 const Container = styled.div`
   width: 50vw;
@@ -14,12 +19,12 @@ const Container = styled.div`
   box-shadow: ${color.shadow} 8px 8px 10px;
 `;
 
-const FormRow =  styled.label`
+const FormRow = styled.label`
   display: block;
   margin-bottom: 20px;
 `;
 
-const FormRowTitle =  styled.span`
+const FormRowTitle = styled.span`
   display: inline-block;
   width: 100px;
   margin-right: 20px;
@@ -42,41 +47,67 @@ const LoginBtn = styled.div`
   }
 `;
 
-
 const Index = () => {
-  const [name, setName] = useState('');
-  const [password, setPassword] = useState('');
+  const [name, setName] = useState("");
+  const [password, setPassword] = useState("");
 
-  const onNameChange = (e) => {
+  const onNameChange = e => {
     setName(e.target.value);
   };
 
-  const onPasswordChange = (e) => {
+  const onPasswordChange = e => {
     setPassword(e.target.value);
   };
 
-  const onSubmit = () => {
-    console.log(`name: ${name} | password: ${password}`)
+  const onSubmit = login => {
+    //e.preventDefault();
+    console.log("The link was clicked.");
+    console.log(`login: ${login}`);
+    let variables = LoginVariables;
+    variables.addAdminInput.name = name;
+    variables.addAdminInput.key = password;
+    login({ variables });
+    console.log(`name: ${name} | password: ${password}`);
   };
 
+  const client = useApolloClient();
+
+  const [login, { loading, error }] = useMutation(LoginMutation, {
+    onCompleted({ login }) {
+      console.log('login :', login)
+      //localStorage.setItem("token", login);
+      client.writeData({ data: { isLoggedIn: true } });
+    }
+  });
+  if (loading) return <p>Loading....</p>;
+  if (error) return <p>An error occurred</p>;
+
   return (
-    <>
-      <Container>
-          <h1>Login</h1>
-          <form>
-            <FormRow>
-              <FormRowTitle>Name:</FormRowTitle>
-              <input type="text" name="name" onChange= {onNameChange} value={name} />
-            </FormRow>
-            <FormRow>
-              <FormRowTitle>Password:</FormRowTitle>
-              <input type="password" name="password" onChange= {onPasswordChange} value={password} />
-            </FormRow>
-            <LoginBtn onClick= {onSubmit}>Login</LoginBtn>
-          </form>
-      </Container>
-    </>
+    <Container>
+      <h1>Login</h1>
+      <form>
+        <FormRow>
+          <FormRowTitle>Name:</FormRowTitle>
+          <input
+            type="text"
+            name="name"
+            onChange={onNameChange}
+            value={name}
+          />
+        </FormRow>
+        <FormRow>
+          <FormRowTitle>Password:</FormRowTitle>
+          <input
+            type="password"
+            name="password"
+            onChange={onPasswordChange}
+            value={password}
+          />
+        </FormRow>
+        <LoginBtn onClick={() => onSubmit(login)}>Login</LoginBtn>
+      </form>
+    </Container>
   );
-}
+};
 
 export default Index;
