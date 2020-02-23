@@ -26,7 +26,7 @@ const Admins = (input) => {
 
 Admins.propTypes = {
   data: PropTypes.shape({
-    loading: PropTypes.shape({}),
+    loading: PropTypes.bool,
     error: PropTypes.shape({}),
     admins: PropTypes.arrayOf(PropTypes.shape({}))
   }),
