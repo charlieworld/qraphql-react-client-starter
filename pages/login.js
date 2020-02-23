@@ -1,30 +1,14 @@
 import React from "react";
-import ApolloClient from "apollo-boost";
 import { ApolloProvider } from "react-apollo";
-import fetch from "node-fetch";
-import Login from "../components/Login"
-import styled from "styled-components";
+import client from "../tools/client";
+import Login from "../components/Login";
 
-const Container = styled.div`
-  display: flex;
-  justify-content: center;
-  padding-top: 20vh;
-`;
-
-const client = new ApolloClient({
-  uri: "http://localhost:8101/api",
-  fetch
-});
-
-function LoginPage() {
+const Index = () => {
   return (
     <ApolloProvider client={client}>
-      <Container>
-        <Login />
-      </Container>
+      <Login/>
     </ApolloProvider>
-
   );
 }
 
-export default LoginPage;
+export default Index;

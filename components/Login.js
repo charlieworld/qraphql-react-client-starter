@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useApolloClient, useMutation } from "@apollo/react-hooks";
-//import { useRouter } from 'next/router'
+import { useRouter } from 'next/router'
 import token from '../tools/token'
 import styled from "styled-components";
 import color from "../assist/color";
@@ -49,6 +49,9 @@ const LoginBtn = styled.div`
 const Index = () => {
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
+  const [errorShow, setErrorShow] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const router = useRouter()
 
   const onNameChange = e => {
     setName(e.target.value);
@@ -62,19 +65,25 @@ const Index = () => {
     let variables = LoginVariables;
     variables.addAdminInput.name = name;
     variables.addAdminInput.key = password;
+    setErrorShow(false);
     login({ variables });
   };
 
   const client = useApolloClient();
 
-  const [login, { loading, error }] = useMutation(LoginMutation, {
+  const [login, { loading }] = useMutation(LoginMutation, {
     onCompleted({login}) {
       token.set(login.token);
       client.writeData({ data: { isLoggedIn: true } });
+      router.push("/");
+    },
+    onError(error) {
+      setErrorMessage(error.message);
+      setErrorShow(true);
+      client.writeData({ data: { isLoggedIn: false } });
     }
   });
   if (loading) return <p>Loading....</p>;
-  if (error) return <p>An error occurred</p>;
 
   return (
     <Container>
@@ -98,6 +107,7 @@ const Index = () => {
             value={password}
           />
         </FormRow>
+        <div>{errorShow ? errorMessage : ""}</div>
         <LoginBtn onClick={() => onSubmit(login)}>Login</LoginBtn>
       </form>
     </Container>
